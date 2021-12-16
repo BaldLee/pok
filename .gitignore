@@ -26,3 +26,6 @@ generated-code/
 GPATH
 GRTAGS
 GTAGS
+
+examples/
+.vscode/
