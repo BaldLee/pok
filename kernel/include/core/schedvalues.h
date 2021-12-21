@@ -24,8 +24,7 @@ typedef enum {
   POK_SCHED_LLF = 5,
   POK_SCHED_STATIC = 6,
   POK_SCHED_PRIORITY = 7,
-  POK_SCHED_EDF = 8,
-  POK_SCHED_WRR = 9
+  POK_SCHED_WRR = 8
 } pok_sched_t;
 
 #endif
