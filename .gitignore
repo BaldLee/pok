@@ -27,5 +27,7 @@ GPATH
 GRTAGS
 GTAGS
 
-examples/
 .vscode/
+qemu.pid
+grub-boot-only.img
+
