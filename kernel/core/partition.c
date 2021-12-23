@@ -135,6 +135,7 @@ void pok_partition_setup_main_thread(const uint8_t pid) {
  * and lockobjects bounds.
  */
 pok_ret_t pok_partition_init() {
+  printf("##################################### init\n");
   uint8_t i;
   uint32_t threads_index = 0;
 

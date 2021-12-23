@@ -510,6 +510,9 @@ uint32_t pok_sched_part_static(const uint32_t index_low,
                                const uint32_t index_high,
                                const uint32_t prev_thread,
                                const uint32_t current_thread) {
+#ifdef POK_NEEDS_DEBUG
+  printf("################# We are using STATIC ################\n");
+#endif
   uint32_t from = current_thread != IDLE_THREAD ? current_thread : prev_thread;
   int32_t max_prio = -1;
   uint32_t max_thread = current_thread;
@@ -582,6 +585,28 @@ uint32_t pok_sched_part_static(const uint32_t index_low,
   return elected;
 }
 #endif // POK_NEEDS_SCHED_STATIC
+
+#define POK_NEDDS_SCHED_PRIORITY
+#ifdef POK_NEDDS_SCHED_PRIORITY
+uint32_t pok_sched_part_priority(const uint32_t index_low,
+                                 const uint32_t index_high,
+                                 const uint32_t prev_thread,
+                                 const uint32_t current_thread) {
+  uint32_t elected;
+  uint32_t from;
+  uint8_t current_proc = pok_get_proc_id();
+
+  if (current_thread == IDLE_THREAD) {
+    elected = (prev_thread != IDLE_THREAD) ? prev_thread : index_low;
+  } else {
+    elected = current_thread;
+  }
+
+  from = elected;
+
+  return elected;
+}
+#endif // POK_NEDDS_SCHED_PRIORITY
 
 uint32_t pok_sched_part_rr(const uint32_t index_low, const uint32_t index_high,
                            const uint32_t prev_thread,
