@@ -15,7 +15,7 @@
 #define POK_CONFIG_PARTITIONS_NTHREADS                                         \
   { 3, 2 }
 #define POK_CONFIG_PARTITIONS_SCHEDULER                                        \
-  { POK_SCHED_STATIC, POK_SCHED_RR }
+  { POK_SCHED_PRIORITY, POK_SCHED_RR, POK_SCHED_EDF, POK_SCHED_WRR }
 #define POK_CONFIG_PARTITIONS_SIZE                                             \
   { 133120, 133120 }
 #define POK_CONFIG_PROCESSOR_AFFINITY                                          \
