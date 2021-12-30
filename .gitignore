@@ -30,4 +30,5 @@ GTAGS
 .vscode/
 qemu.pid
 grub-boot-only.img
+examples/semaphorestest
 

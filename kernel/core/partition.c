@@ -49,30 +49,47 @@ extern uint64_t partition_processor_affinity[];
  **\brief Setup the scheduler used in partition pid
  */
 void pok_partition_setup_scheduler(const uint8_t pid) {
+  printf("####################################\n");
 #ifdef POK_CONFIG_PARTITIONS_SCHEDULER
+  printf("case: %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid]);
+  printf("=? %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid] ==
+                        POK_SCHED_PRIORITY);
   switch (((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid]) {
 #ifdef POK_NEEDS_SCHED_RMS
-  case POK_SCHED_RMS:
+  case POK_SCHED_RMS: {
     pok_partitions[pid].sched_func = &pok_sched_part_rms;
+    printf("rms\n");
     break;
+  }
 #endif
 #ifdef POK_NEEDS_SCHED_STATIC
-  case POK_SCHED_STATIC:
+  case POK_SCHED_STATIC: {
     pok_partitions[pid].sched_func = &pok_sched_part_static;
+    printf("static\n");
     break;
+  }
 #endif // POK_NEEDS_SCHED_STATIC
-
+#ifdef POK_NEDDS_SCHED_PRIORITY
+  case POK_SCHED_PRIORITY: {
+    pok_partitions[pid].sched_func = &pok_sched_part_priority;
+    printf("priority\n");
+    break;
+  }
+#endif // POK_NEEDS_SCHED_PRIORITY
     /*
      * Default scheduling algorithm is Round Robin.
      * Yes, it sucks
      */
-  default:
+  default: {
     pok_partitions[pid].sched_func = &pok_sched_part_rr;
+    printf("default rr\n");
     break;
+  }
   }
 #else
   pok_partitions[pid].sched_func = &pok_sched_part_rr;
 #endif
+  printf("####################################\n");
 }
 
 /**
@@ -135,7 +152,6 @@ void pok_partition_setup_main_thread(const uint8_t pid) {
  * and lockobjects bounds.
  */
 pok_ret_t pok_partition_init() {
-  printf("##################################### init\n");
   uint8_t i;
   uint32_t threads_index = 0;
 
