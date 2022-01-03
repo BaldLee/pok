@@ -14,9 +14,21 @@
 
 #include <core/thread.h>
 #include <libc/stdio.h>
+
+void kill_time(unsigned int cycle) {
+  for (unsigned int i = 0; i < cycle; i++) {
+    for (unsigned int j = 2; j < 1000; j++) {
+      for (unsigned int k = 2; k < j; k++) {
+        int temp = j % k;
+      }
+    }
+  }
+}
+
 void *pinger_job() {
   while (1) {
-    printf("P1T1: begin of task\n");
-    pok_thread_sleep(2000000);
+    printf("Take a rest!\n");
+    kill_time(100000);
+    pok_thread_sleep(20000);
   }
 }

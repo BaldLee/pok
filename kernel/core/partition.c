@@ -50,42 +50,34 @@ extern uint64_t partition_processor_affinity[];
  */
 void pok_partition_setup_scheduler(const uint8_t pid) {
 #ifdef POK_CONFIG_PARTITIONS_SCHEDULER
-  printf("case: %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid]);
-  printf("=? %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid] ==
-                        POK_SCHED_PRIORITY);
   switch (((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid]) {
 #ifdef POK_NEEDS_SCHED_RMS
   case POK_SCHED_RMS: {
     pok_partitions[pid].sched_func = &pok_sched_part_rms;
-    printf("rms\n");
     break;
   }
 #endif
 #ifdef POK_NEEDS_SCHED_STATIC
   case POK_SCHED_STATIC: {
     pok_partitions[pid].sched_func = &pok_sched_part_static;
-    printf("static\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_STATIC
 #ifdef POK_NEEDS_SCHED_PRIORITY
   case POK_SCHED_PRIORITY: {
     pok_partitions[pid].sched_func = &pok_sched_part_priority;
-    printf("priority\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_PRIORITY
 #ifdef POK_NEEDS_SCHED_EDF
   case POK_SCHED_EDF: {
     pok_partitions[pid].sched_func = &pok_sched_part_edf;
-    printf("edf\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_EDF
 #ifdef POK_NEEDS_SCHED_WRR
   case POK_SCHED_WRR: {
     pok_partitions[pid].sched_func = &pok_sched_part_wrr;
-    printf("wrr\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_WRR
@@ -95,7 +87,6 @@ void pok_partition_setup_scheduler(const uint8_t pid) {
      */
   default: {
     pok_partitions[pid].sched_func = &pok_sched_part_rr;
-    printf("default rr\n");
     break;
   }
   }

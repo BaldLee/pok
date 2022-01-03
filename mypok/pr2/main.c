@@ -25,10 +25,31 @@ int main() {
 
   tattr.priority = 0;
   tattr.entry = input_job;
-  tattr.processor_affinity = 0;
+  tattr.time_capacity = 10000;
+  tattr.period = 100000;
+  tattr.deadline = 100000;
 
   ret = pok_thread_create(&tid, &tattr);
   printf("[P2] input thread create returns=%d\n", ret);
+
+  tattr.priority = 60;
+  tattr.entry = learn_csp;
+  tattr.period = 5000000;
+  tattr.deadline = 5000000;
+  tattr.time_capacity = 20000;
+  ret = pok_thread_create(&tid, &tattr);
+  printf("[P2] thread create returns=%d\n", ret);
+  printf("csp planed.\n");
+
+  tattr.priority = 20;
+  tattr.entry = learn_rtss;
+  tattr.period = 5000000;
+  tattr.deadline = 4000000;
+  tattr.time_capacity = 30000;
+  ret = pok_thread_create(&tid, &tattr);
+  printf("[P2] thread create returns=%d\n", ret);
+  printf("rtss planed.\n");
+
   pok_partition_set_mode(POK_PARTITION_MODE_NORMAL);
   pok_thread_wait_infinite();
 

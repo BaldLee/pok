@@ -14,6 +14,7 @@
 
 #ifndef __POK_USER_GENERATED_ACTIVITY_H_
 #define __POK_USER_GENERATED_ACTIVITY_H_
-void *pinger_job();
+void *learn_csp();
+void *learn_rtss();
 void *input_job();
 #endif

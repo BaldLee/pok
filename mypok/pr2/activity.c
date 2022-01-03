@@ -12,7 +12,9 @@
  *                                      Copyright (c) 2007-2021 POK team
  */
 
+#include <core/partition.h>
 #include <core/thread.h>
+#include <core/time.h>
 #include <libc/stdio.h>
 char getc() {
   int ret;
@@ -23,11 +25,29 @@ char getc() {
     }
   }
 }
+void kill_time(unsigned int cycle) {
+  for (unsigned int i = 0; i < cycle; i++) {
+    for (unsigned int j = 2; j < 1000; j++) {
+      for (unsigned int k = 2; k < j; k++) {
+        int temp = j % k;
+      }
+    }
+  }
+}
 
-void *pinger_job() {
+void *learn_csp() {
   while (1) {
-    printf("P2T1: begin of task\n");
-    pok_thread_sleep(2000000);
+    printf("Learn CSP!\n");
+    kill_time(10000);
+    pok_thread_sleep(10000);
+  }
+}
+
+void *learn_rtss() {
+  while (1) {
+    printf("Learn RTSS!\n");
+    kill_time(10000);
+    pok_thread_sleep(10000);
   }
 }
 
@@ -35,15 +55,46 @@ void *input_job() {
   uint32_t tid;
   int ret;
   pok_thread_attr_t tattr;
-  while (1) {
-    printf("input a number\n");
+  for (int i = 0; i < 2; i++) {
+    printf("Input a number to add a job:\n");
+    printf("    Input 0 to add nothing.\n");
+    printf("    Input 1 to plan to learn csp.\n");
+    printf("    Input 2 to plan to learn rtss.\n ");
     char c = getc();
-    printf("The c is %i\n", c);
-    tattr.priority = 42;
-    tattr.entry = pinger_job;
-    tattr.processor_affinity = 0;
-
-    ret = pok_thread_create(&tid, &tattr);
-    printf("[P2] thread create returns=%d\n", ret);
+    switch (c) {
+    case '0': {
+      printf("Nothing to do.\n");
+      break;
+    }
+    case '1': {
+      tattr.priority = 60;
+      tattr.entry = learn_csp;
+      tattr.period = 5000000;
+      tattr.deadline = 5000000;
+      tattr.time_capacity = 20000;
+      tattr.weight = 1;
+      ret = pok_thread_create(&tid, &tattr);
+      printf("[INPUT] thread create returns=%d\n", ret);
+      printf("csp planed.\n");
+      break;
+    }
+    case '2': {
+      tattr.priority = 20;
+      tattr.entry = learn_rtss;
+      tattr.period = 5000000;
+      tattr.deadline = 4000000;
+      tattr.time_capacity = 30000;
+      tattr.weight = 2;
+      ret = pok_thread_create(&tid, &tattr);
+      printf("[INPUT] thread create returns=%d\n", ret);
+      printf("rtss planed.\n");
+      break;
+    }
+    default: {
+      printf("We don't know what to do.\n");
+    }
+    }
+    kill_time(100000);
+    pok_thread_sleep(10000);
   }
 }
