@@ -49,7 +49,6 @@ extern uint64_t partition_processor_affinity[];
  **\brief Setup the scheduler used in partition pid
  */
 void pok_partition_setup_scheduler(const uint8_t pid) {
-  printf("####################################\n");
 #ifdef POK_CONFIG_PARTITIONS_SCHEDULER
   printf("case: %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid]);
   printf("=? %d\n", ((pok_sched_t[])POK_CONFIG_PARTITIONS_SCHEDULER)[pid] ==
@@ -76,6 +75,13 @@ void pok_partition_setup_scheduler(const uint8_t pid) {
     break;
   }
 #endif // POK_NEEDS_SCHED_PRIORITY
+#ifdef POK_NEDDS_SCHED_EDF
+  case POK_SCHED_EDF: {
+    pok_partitions[pid].sched_func = &pok_sched_part_edf;
+    printf("edf\n");
+    break;
+  }
+#endif // POK_NEEDS_SCHED_EDF
     /*
      * Default scheduling algorithm is Round Robin.
      * Yes, it sucks
@@ -89,7 +95,6 @@ void pok_partition_setup_scheduler(const uint8_t pid) {
 #else
   pok_partitions[pid].sched_func = &pok_sched_part_rr;
 #endif
-  printf("####################################\n");
 }
 
 /**

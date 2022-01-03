@@ -609,6 +609,32 @@ pok_sched_part_priority(const uint32_t index_low, const uint32_t index_high,
 }
 #endif // POK_NEDDS_SCHED_PRIORITY
 
+#ifdef POK_NEDDS_SCHED_EDF
+uint32_t pok_sched_part_edf(const uint32_t index_low, const uint32_t index_high,
+                            const uint32_t __attribute__((unused)) prev_thread,
+                            const uint32_t __attribute__((unused))
+                            current_thread) {
+  uint32_t res;
+  uint8_t current_proc = pok_get_proc_id();
+  res = index_low;
+  do {
+    res++;
+    if (res > index_high) {
+      res = index_low;
+    }
+  } while ((res != index_low) &&
+           ((pok_threads[res].state != POK_STATE_RUNNABLE) ||
+            (pok_threads[res].processor_affinity != current_proc)));
+
+  if ((res == index_low) &&
+      ((pok_threads[res].state != POK_STATE_RUNNABLE) ||
+       (pok_threads[res].processor_affinity != current_proc))) {
+    res = IDLE_THREAD;
+  }
+  return res;
+}
+#endif // POK_NEDDS_SCHED_EDF
+
 uint32_t pok_sched_part_rr(const uint32_t index_low, const uint32_t index_high,
                            const uint32_t prev_thread,
                            const uint32_t current_thread) {

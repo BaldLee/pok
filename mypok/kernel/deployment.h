@@ -15,7 +15,7 @@
 #define POK_CONFIG_PARTITIONS_NTHREADS                                         \
   { 3, 2 }
 #define POK_CONFIG_PARTITIONS_SCHEDULER                                        \
-  { POK_SCHED_PRIORITY, POK_SCHED_RR, POK_SCHED_EDF, POK_SCHED_WRR }
+  { POK_SCHED_EDF, POK_SCHED_EDF }
 #define POK_CONFIG_PARTITIONS_SIZE                                             \
   { 133120, 133120 }
 #define POK_CONFIG_PROCESSOR_AFFINITY                                          \
@@ -32,9 +32,9 @@
 #define POK_NEEDS_CONSOLE 1
 #define POK_NEEDS_DEBUG 1
 #define POK_NEEDS_LOCKOBJECTS 1
-#define POK_NEEDS_SCHED_PRIORITY 1
+// #define POK_NEDDS_SCHED_PRIORITY 1
 // #define POK_NEEDS_SCHED_RR 1
-// #define POK_NEEDS_SCHED_EDF 1
+#define POK_NEDDS_SCHED_EDF 1
 // #define POK_NEEDS_SCHED_WRR 1
 #define POK_NEEDS_THREAD_SLEEP 1
 #define POK_NEEDS_THREAD_SUSPEND 1

@@ -63,7 +63,7 @@ void pok_thread_insert_sort(uint16_t index_low, uint16_t index_high) {
   }
   pok_threads[j + 1] = val;
 }
-#endif
+#endif // POK_NEEDS_SCHED_RMS
 
 #ifdef POK_NEEDS_SCHED_PRIORITY
 /* Threads will be sorted in increasing order */
@@ -79,7 +79,21 @@ void pok_thread_insert_priority_sort(uint16_t index_low, uint16_t index_high) {
   }
   pok_threads[j + 1] = val;
 }
-#endif
+#endif // POK_NEEDS_SCHED_PRIORITY
+
+#ifdef POK_NEEDS_SCHED_EDF
+void pok_thread_insert_edf_sort(uint16_t index_low, uint16_t index_high) {
+  uint32_t i = index_high, j = 0;
+  pok_thread_t val;
+
+  val = pok_threads[i];
+  j = i - 1;
+  while (j >= index_low && pok_threads[j].deadline > val.deadline) {
+    pok_threads[j + 1] = pok_threads[j];
+    j--;
+  }
+}
+#endif // POK_NEEDS_SCHED_EDF
 
 void pok_idle_thread_init() {
 
@@ -230,7 +244,7 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
     pok_thread_insert_sort(pok_partitions[partition_id].thread_index_low + 1,
                            id);
   }
-#endif
+#endif // POK_NEEDS_SCHED_RMS
 
 #ifdef POK_NEEDS_SCHED_PRIORITY
   if ((pok_partitions[partition_id].sched == POK_SCHED_PRIORITY) &&
@@ -238,7 +252,15 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
     pok_thread_insert_priority_sort(
         pok_partitions[partition_id].thread_index_low + 1, id);
   }
-#endif
+#endif // POK_NEEDS_SCHED_PRIORITY
+
+#ifdef POK_NEEDS_SCHED_EDF
+  if ((pok_partitions[partition_id].sched == POK_SCHED_EDF) &&
+      (id > pok_partitions[partition_id].thread_index_low)) {
+    pok_thread_insert_edf_sort(
+        pok_partitions[partition_id].thread_index_low + 1, id);
+  }
+#endif // POK_NEEDS_SCHED_EDF
 
 #ifdef POK_NEEDS_INSTRUMENTATION
   pok_instrumentation_task_archi(id);
