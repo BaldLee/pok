@@ -14,9 +14,36 @@
 
 #include <core/thread.h>
 #include <libc/stdio.h>
+char getc() {
+  int ret;
+  while (1) {
+    ret = getChar();
+    if (ret != -1) {
+      return (char)ret;
+    }
+  }
+}
+
 void *pinger_job() {
   while (1) {
     printf("P2T1: begin of task\n");
-    pok_thread_sleep(5000000);
+    pok_thread_sleep(2000000);
+  }
+}
+
+void *input_job() {
+  uint32_t tid;
+  int ret;
+  pok_thread_attr_t tattr;
+  while (1) {
+    printf("input a number\n");
+    char c = getc();
+    printf("The c is %i\n", c);
+    tattr.priority = 42;
+    tattr.entry = pinger_job;
+    tattr.processor_affinity = 0;
+
+    ret = pok_thread_create(&tid, &tattr);
+    printf("[P2] thread create returns=%d\n", ret);
   }
 }
