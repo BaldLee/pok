@@ -583,7 +583,7 @@ uint32_t pok_sched_part_static(const uint32_t index_low,
 }
 #endif // POK_NEEDS_SCHED_STATIC
 
-#ifdef POK_NEDDS_SCHED_PRIORITY
+#ifdef POK_NEEDS_SCHED_PRIORITY
 uint32_t
 pok_sched_part_priority(const uint32_t index_low, const uint32_t index_high,
                         const uint32_t __attribute__((unused)) prev_thread,
@@ -607,9 +607,9 @@ pok_sched_part_priority(const uint32_t index_low, const uint32_t index_high,
   }
   return res;
 }
-#endif // POK_NEDDS_SCHED_PRIORITY
+#endif // POK_NEEDS_SCHED_PRIORITY
 
-#ifdef POK_NEDDS_SCHED_EDF
+#ifdef POK_NEEDS_SCHED_EDF
 uint32_t pok_sched_part_edf(const uint32_t index_low, const uint32_t index_high,
                             const uint32_t __attribute__((unused)) prev_thread,
                             const uint32_t __attribute__((unused))
@@ -633,7 +633,49 @@ uint32_t pok_sched_part_edf(const uint32_t index_low, const uint32_t index_high,
   }
   return res;
 }
-#endif // POK_NEDDS_SCHED_EDF
+#endif // POK_NEEDS_SCHED_EDF
+
+#ifdef POK_NEEDS_SCHED_WRR
+uint32_t pok_sched_part_wrr(const uint32_t index_low, const uint32_t index_high,
+                            const uint32_t prev_thread,
+                            const uint32_t current_thread) {
+  uint32_t elected;
+  uint32_t from;
+  uint8_t current_proc = pok_get_proc_id();
+
+  if (current_thread == IDLE_THREAD) {
+    elected = (prev_thread != IDLE_THREAD) ? prev_thread : index_low;
+  } else {
+    elected = current_thread;
+  }
+
+  from = elected;
+
+  if ((pok_threads[current_thread].remaining_time_capacity > 0 ||
+       pok_threads[current_thread].time_capacity == INFINITE_TIME_VALUE) &&
+      (pok_threads[current_thread].state == POK_STATE_RUNNABLE) &&
+      (pok_threads[current_thread].processor_affinity == current_proc) &&
+      current_thread != IDLE_THREAD) {
+    return current_thread;
+  }
+
+  do {
+    elected++;
+    if (elected >= index_high) {
+      elected = index_low;
+    }
+  } while ((elected != from) &&
+           ((pok_threads[elected].state != POK_STATE_RUNNABLE) ||
+            (pok_threads[elected].processor_affinity != current_proc)));
+
+  if ((elected == from) &&
+      ((pok_threads[elected].state != POK_STATE_RUNNABLE) ||
+       (pok_threads[elected].processor_affinity != current_proc))) {
+    elected = IDLE_THREAD;
+  }
+  return elected;
+}
+#endif // POK_NEEDS_SCHED_WRR
 
 uint32_t pok_sched_part_rr(const uint32_t index_low, const uint32_t index_high,
                            const uint32_t prev_thread,

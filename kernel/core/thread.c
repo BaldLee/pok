@@ -95,6 +95,20 @@ void pok_thread_insert_edf_sort(uint16_t index_low, uint16_t index_high) {
 }
 #endif // POK_NEEDS_SCHED_EDF
 
+#ifdef POK_NEEDS_SCHED_WRR
+void pok_thread_insert_wrr_sort(uint16_t index_low, uint16_t index_high) {
+  uint32_t i = index_high, j = 0;
+  pok_thread_t val;
+
+  val = pok_threads[i];
+  j = i - 1;
+  while (j >= index_low && pok_threads[j].weight < val.weight) {
+    pok_threads[j + 1] = pok_threads[j];
+    j--;
+  }
+}
+#endif // POK_NEEDS_SCHED_WRR
+
 void pok_idle_thread_init() {
 
   for (int i = 0; i < POK_CONFIG_NB_PROCESSORS; i++) {
@@ -198,6 +212,10 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
     pok_threads[id].deadline = attr->deadline;
   }
 
+  if (attr->weight > 0) {
+    pok_threads[id].weight = attr->weight;
+  }
+
   if (attr->time_capacity > 0) {
     pok_threads[id].time_capacity = attr->time_capacity;
     pok_threads[id].remaining_time_capacity = attr->time_capacity;
@@ -261,6 +279,17 @@ pok_ret_t pok_partition_thread_create(uint32_t *thread_id,
         pok_partitions[partition_id].thread_index_low + 1, id);
   }
 #endif // POK_NEEDS_SCHED_EDF
+
+#ifdef POK_NEEDS_SCHED_WRR
+  if (pok_partitions[partition_id].sched == POK_SCHED_WRR) {
+    pok_threads[id].remaining_time_capacity *= pok_threads[id].weight;
+  }
+  if ((pok_partitions[partition_id].sched == POK_SCHED_WRR) &&
+      (id > pok_partitions[partition_id].thread_index_low)) {
+    pok_thread_insert_wrr_sort(
+        pok_partitions[partition_id].thread_index_low + 1, id);
+  }
+#endif // POK_NEEDS_SCHED_WRR
 
 #ifdef POK_NEEDS_INSTRUMENTATION
   pok_instrumentation_task_archi(id);

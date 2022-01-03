@@ -68,20 +68,27 @@ void pok_partition_setup_scheduler(const uint8_t pid) {
     break;
   }
 #endif // POK_NEEDS_SCHED_STATIC
-#ifdef POK_NEDDS_SCHED_PRIORITY
+#ifdef POK_NEEDS_SCHED_PRIORITY
   case POK_SCHED_PRIORITY: {
     pok_partitions[pid].sched_func = &pok_sched_part_priority;
     printf("priority\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_PRIORITY
-#ifdef POK_NEDDS_SCHED_EDF
+#ifdef POK_NEEDS_SCHED_EDF
   case POK_SCHED_EDF: {
     pok_partitions[pid].sched_func = &pok_sched_part_edf;
     printf("edf\n");
     break;
   }
 #endif // POK_NEEDS_SCHED_EDF
+#ifdef POK_NEEDS_SCHED_WRR
+  case POK_SCHED_WRR: {
+    pok_partitions[pid].sched_func = &pok_sched_part_wrr;
+    printf("wrr\n");
+    break;
+  }
+#endif // POK_NEEDS_SCHED_WRR
     /*
      * Default scheduling algorithm is Round Robin.
      * Yes, it sucks
